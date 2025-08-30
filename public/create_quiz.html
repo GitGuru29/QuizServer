@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9fafb;
+      padding: 20px;
+    }
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 0.6rem;
+      margin-top: 0.4rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.7rem 1.2rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .add-btn {
+      background: #007bff;
+      color: white;
+    }
+    .add-btn:hover { background: #0056b3; }
+    .save-btn {
+      background: #28a745;
+      color: white;
+    }
+    .save-btn:hover { background: #1e7e34; }
+    .question {
+      border: 1px solid #ddd;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Create Quiz</h1>
+    <label for="quiz-name">Quiz Name:</label>
+    <input type="text" id="quiz-name" placeholder="Enter quiz title" />
+
+    <div id="questions-container"></div>
+
+    <button class="add-btn" id="add-question">+ Add Question</button>
+    <button class="save-btn" id="save-quiz">Save Quiz</button>
+  </div>
+
+  <script>
+    const questionsContainer = document.getElementById('questions-container');
+    const addQuestionBtn = document.getElementById('add-question');
+    const saveQuizBtn = document.getElementById('save-quiz');
+
+    let questionCount = 0;
+
+    // Add new question block
+    addQuestionBtn.onclick = () => {
+      questionCount++;
+      const qDiv = document.createElement('div');
+      qDiv.className = 'question';
+      qDiv.innerHTML = `
+        <label>Question ${questionCount}</label>
+        <input type="text" class="q-text" placeholder="Enter question text" />
+
+        <label>Option A</label>
+        <input type="text" class="opt" />
+
+        <label>Option B</label>
+        <input type="text" class="opt" />
+
+        <label>Option C</label>
+        <input type="text" class="opt" />
+
+        <label>Option D</label>
+        <input type="text" class="opt" />
+
+        <label>Correct Answer</label>
+        <select class="correct">
+          <option value="A">Option A</option>
+          <option value="B">Option B</option>
+          <option value="C">Option C</option>
+          <option value="D">Option D</option>
+        </select>
+      `;
+      questionsContainer.appendChild(qDiv);
+    };
+
+    // Save quiz as JSON
+    saveQuizBtn.onclick = () => {
+        const quizData = {
+            name: document.getElementById('quiz-name').value.trim(),
+            questions: [...document.querySelectorAll('.question')].map((qBlock, index) => {
+                const qText = qBlock.querySelector('.q-text').value.trim();
+                const opts = Array.from(qBlock.querySelectorAll('.opt')).map(opt => opt.value.trim());
+                const correct = qBlock.querySelector('.correct').value;
+
+                return {
+                    question: qText,
+                    options: { A: opts[0], B: opts[1], C: opts[2], D: opts[3] },
+                    correct
+                };
+                })
+            };
+
+            if (!quizData.name || quizData.questions.length === 0) {
+                alert("Please enter quiz name and add at least one question.");
+                return;
+            }
+
+            window.electronAPI.saveQuiz(quizData);
+            alert("✅ Quiz saved locally!");
+    };
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+dist/
+
+# Logs & temp
+*.log
+*.tmp
+
+# System files
+.DS_Store
+
+# Quiz runtime data
+currentQuiz.json
+quizzes/*.json

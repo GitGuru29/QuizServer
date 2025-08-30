@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Join Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9fafb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 600px;
+      width: 100%;
+    }
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 1.2rem;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 0.6rem;
+      margin-top: 0.4rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 0.7rem 1.2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 1rem;
+      width: 100%;
+    }
+    button:hover { background: #0056b3; }
+    #leave-btn { background: #dc3545; }
+    #leave-btn:hover { background: #a71d2a; }
+    .question {
+      margin-top: 1rem;
+      padding: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #f1f5f9;
+    }
+    .question p { font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Join Quiz</h1>
+
+    <label for="student-name">Your Name:
+      <input type="text" id="student-name" required />
+    </label>
+    <button id="join-btn">Join</button>
+
+    <div id="quiz-section" style="display:none;">
+      <h2 id="quiz-title">Welcome! 🎉</h2>
+      <div id="quiz-content"></div>
+      <button id="submit-btn" style="display:none;">Submit Answers</button>
+      <button id="leave-btn">Leave Quiz</button>
+    </div>
+  </div>
+
+  <script>
+    window.onload = () => {
+        localStorage.removeItem('participantId');
+    };
+    const joinBtn = document.getElementById('join-btn');
+    const leaveBtn = document.getElementById('leave-btn');
+    const submitBtn = document.getElementById('submit-btn');
+    const nameInput = document.getElementById('student-name');
+    const quizSection = document.getElementById('quiz-section');
+    const quizTitle = document.getElementById('quiz-title');
+    const quizContent = document.getElementById('quiz-content');
+
+    let quizData = null;
+
+    // Join Quiz
+    joinBtn.onclick = async () => {
+      const name = nameInput.value.trim();
+      if (!name) return alert('Please enter your name.');
+
+      if (localStorage.getItem('participantId')) {
+        alert('You already joined!');
+        return;
+      }
+
+      const res = await fetch('/api/join', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
+      });
+      const data = await res.json();
+
+      localStorage.setItem('participantId', data.id);
+
+      quizSection.style.display = 'block';
+      joinBtn.disabled = true;
+      nameInput.disabled = true;
+
+      // Start fetching quizzes
+      fetchQuiz();
+      setInterval(fetchQuiz, 5000);
+    };
+
+    // Fetch current quiz
+    async function fetchQuiz() {
+      const res = await fetch('/api/currentQuiz');
+      if (!res.ok) return;
+      const quiz = await res.json();
+      if (!quiz.questions) return;
+
+      if (!quizData || quizData.name !== quiz.name) {
+        quizData = quiz;
+        renderQuiz(quiz);
+      }
+    }
+
+    // Render quiz questions
+    function renderQuiz(quiz) {
+      quizTitle.textContent = quiz.name;
+      quizContent.innerHTML = '';
+      quiz.questions.forEach((q, idx) => {
+        const qDiv = document.createElement('div');
+        qDiv.className = 'question';
+        qDiv.innerHTML = `
+          <p>${idx + 1}. ${q.question}</p>
+          ${Object.keys(q.options).map(k => `
+            <label><input type="radio" name="q${idx}" value="${k}"> ${k}) ${q.options[k]}</label><br>
+          `).join('')}
+        `;
+        quizContent.appendChild(qDiv);
+      });
+      submitBtn.style.display = 'block';
+    }
+
+    // Submit answers
+    submitBtn.onclick = async () => {
+      const answers = [];
+      quizData.questions.forEach((q, idx) => {
+        const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+        answers[idx] = selected ? selected.value : null;
+      });
+
+      const res = await fetch('/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ participantId: localStorage.getItem('participantId'), answers })
+      });
+      const result = await res.json();
+      alert(`🎉 You scored ${result.score} / ${quizData.questions.length}`);
+    };
+
+    // Leave Quiz
+    leaveBtn.onclick = () => {
+      localStorage.removeItem('participantId');
+      quizSection.style.display = 'none';
+      joinBtn.disabled = false;
+      nameInput.disabled = false;
+      nameInput.value = '';
+      alert('You have left the quiz.');
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuizServer Admin</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9fafb;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+    }
+    h1 {
+      margin-bottom: 1rem;
+      font-size: 2rem;
+      color: #333;
+    }
+    p {
+      margin-bottom: 2rem;
+      color: #555;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 0.8rem;
+      margin: 0.5rem 0;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-primary {
+      background: #007bff;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #0056b3;
+    }
+    .btn-success {
+      background: #28a745;
+      color: white;
+    }
+    .btn-success:hover {
+      background: #1e7e34;
+    }
+    .btn-warning {
+      background: #ffc107;
+      color: #333;
+    }
+    .btn-warning:hover {
+      background: #e0a800;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Welcome, Admin 👩‍🏫</h1>
+    <p>Manage your quizzes and monitor participants.</p>
+
+    <button class="btn btn-primary" onclick="location.href='create_quiz.html'">
+      ➕ Create New Quiz
+    </button>
+
+    <button class="btn btn-success" onclick="location.href='admin.html'">
+      📡 Start Server & Monitor Participants
+    </button>
+
+    <button class="btn btn-warning" onclick="location.href='results.html'">
+      📊 View Quiz Results
+    </button>
+  </div>
+</body>
+</html>

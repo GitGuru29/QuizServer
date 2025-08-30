@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>QuizServer Admin</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- ✅ Import QRCode library -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>QuizServer</h1>
+    <div class="control-panel">
+      <label for="ip-select">Select IP to share:</label>
+      <select id="ip-select"></select>
+      <button id="start-server">Start Server</button>
+    </div>
+  </div>
+
+  <div id="instructions" style="display:none;">
+    <h2>Students: Connect Here</h2>
+    <p id="info-text"></p>
+    <canvas id="qrcode"></canvas>
+  </div>
+
+  <h2>Select Quiz</h2>
+  <select id="quiz-select"></select>
+  <button id="start-quiz">Start Quiz</button>
+
+  <h2>Connected Participants</h2>
+  <ul id="participants-list"></ul>
+
+  <script>
+    const startBtn = document.getElementById('start-server');
+    const infoText = document.getElementById('info-text');
+    const instructions = document.getElementById('instructions');
+    const participantsList = document.getElementById('participants-list');
+    const ipSelect = document.getElementById('ip-select');
+    const quizSelect = document.getElementById('quiz-select');
+    const startQuizBtn = document.getElementById('start-quiz');
+
+    let baseURL = '';
+
+    // Ask Electron main process for IPs
+    window.electronAPI.getIPs();
+
+    // Populate dropdown when IPs arrive
+    window.electronAPI.onAvailableIPs((ips) => {
+      ips.forEach(({ name, address }) => {
+        const option = document.createElement('option');
+        option.value = address;
+        option.textContent = `${address} (${name})`;
+        ipSelect.appendChild(option);
+      });
+    });
+
+    startBtn.onclick = () => {
+      const selectedIP = ipSelect.value;
+      window.electronAPI.startServer(selectedIP);
+    };
+
+    window.electronAPI.onServerStarted(({ ip, port }) => {
+      baseURL = `http://${ip}:${port}`;
+      infoText.innerText = `Students: Connect to Wi-Fi, open ${baseURL}`;
+      instructions.style.display = 'block';
+
+      // ✅ Generate QR code here
+      QRCode.toCanvas(document.getElementById('qrcode'), baseURL, function (error) {
+        if (error) console.error(error);
+        else console.log("✅ QR generated!");
+      });
+    });
+
+    function fetchParticipants() {
+      if (!baseURL) return; // Server not started yet
+      fetch(`${baseURL}/api/participants`)
+        .then(res => res.json())
+        .then(data => {
+          participantsList.innerHTML = '';
+          data.forEach(participant => {
+            const li = document.createElement('li');
+            li.textContent = participant.name;
+            participantsList.appendChild(li);
+          });
+        })
+        .catch(err => console.error(err));
+    }
+
+    setInterval(fetchParticipants, 3000);
+
+    window.electronAPI.getQuizzes().then(files => {
+      files.forEach(f => {
+        const opt = document.createElement('option');
+        opt.value = f;
+        opt.textContent = f;
+        quizSelect.appendChild(opt);
+      });
+    });
+
+    startQuizBtn.onclick = () => {
+      const selected = quizSelect.value;
+      window.electronAPI.startQuiz(selected);
+    };
+
+    window.electronAPI.onQuizStarted((quiz) => {
+      alert(`✅ Quiz "${quiz.name}" started!`);
+    });
+  </script>
+</body>
+</html>
