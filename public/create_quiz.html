@@ -17,6 +17,7 @@
       padding: 2rem;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      position: relative;
     }
     h1 {
       text-align: center;
@@ -59,26 +60,50 @@
       border-radius: 8px;
       margin-top: 1rem;
     }
+    .back-btn {
+      background: #6c757d;
+      color: white;
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+    }
+    .back-btn:hover {
+      background: #5a6268;
+    }
+    .buttons-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1.5rem;
+    }
   </style>
 </head>
 <body>
   <div class="container">
+    <button class="back-btn" id="back-button">← Back</button>
     <h1>Create Quiz</h1>
     <label for="quiz-name">Quiz Name:</label>
     <input type="text" id="quiz-name" placeholder="Enter quiz title" />
 
     <div id="questions-container"></div>
 
-    <button class="add-btn" id="add-question">+ Add Question</button>
-    <button class="save-btn" id="save-quiz">Save Quiz</button>
+    <div class="buttons-container">
+      <button class="add-btn" id="add-question">+ Add Question</button>
+      <button class="save-btn" id="save-quiz">Save Quiz</button>
+    </div>
   </div>
 
   <script>
     const questionsContainer = document.getElementById('questions-container');
     const addQuestionBtn = document.getElementById('add-question');
     const saveQuizBtn = document.getElementById('save-quiz');
+    const backButton = document.getElementById('back-button');
 
     let questionCount = 0;
+
+    // Add back button functionality
+    backButton.onclick = () => {
+      window.location.href = 'admin_welcome.html';
+    };
 
     // Add new question block
     addQuestionBtn.onclick = () => {
@@ -137,7 +162,6 @@
             window.electronAPI.saveQuiz(quizData);
             alert("✅ Quiz saved locally!");
     };
-
   </script>
 </body>
 </html>

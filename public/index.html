@@ -4,63 +4,322 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Join Quiz</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    
+    :root {
+      --primary: #6c5ce7;
+      --primary-hover: #5649c0;
+      --secondary: #00cec9;
+      --danger: #e74c3c;
+      --danger-hover: #c0392b;
+      --success: #2ecc71;
+      --light: #f8f9fa;
+      --dark: #2d3436;
+      --gray: #dfe6e9;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
     body {
-      font-family: Arial, sans-serif;
-      background: #f9fafb;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #74ebd5 0%, #9face6 100%);
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       margin: 0;
+      color: var(--dark);
     }
+    
     .card {
       background: white;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      max-width: 600px;
-      width: 100%;
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      max-width: 650px;
+      width: 90%;
+      position: relative;
+      overflow: hidden;
     }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: var(--secondary);
+      opacity: 0.5;
+    }
+    
     h1, h2 {
       text-align: center;
-      margin-bottom: 1.2rem;
+      margin-bottom: 1.5rem;
+      color: var(--primary);
+      font-weight: 600;
+      position: relative;
     }
+    
+    h1::after {
+      content: '';
+      display: block;
+      width: 50px;
+      height: 4px;
+      background: var(--secondary);
+      margin: 10px auto 0;
+      border-radius: 2px;
+    }
+    
     label {
       display: block;
-      margin-top: 1rem;
-      font-weight: bold;
+      margin-top: 1.2rem;
+      font-weight: 500;
+      color: var(--dark);
     }
+    
     input {
       width: 100%;
-      padding: 0.6rem;
-      margin-top: 0.4rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+      padding: 0.8rem 1rem;
+      margin-top: 0.5rem;
+      border: 2px solid var(--gray);
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 1rem;
+      transition: all 0.3s;
     }
+    
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+    }
+    
     button {
-      background: #007bff;
+      background: var(--primary);
       color: white;
       border: none;
-      padding: 0.7rem 1.2rem;
-      border-radius: 8px;
+      padding: 0.9rem 1.2rem;
+      border-radius: 10px;
       font-size: 1rem;
+      font-weight: 500;
       cursor: pointer;
-      transition: background 0.2s;
-      margin-top: 1rem;
+      transition: all 0.3s;
+      margin-top: 1.5rem;
       width: 100%;
+      font-family: inherit;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
     }
-    button:hover { background: #0056b3; }
-    #leave-btn { background: #dc3545; }
-    #leave-btn:hover { background: #a71d2a; }
-    .question {
+    
+    button:hover { 
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+    }
+    
+    button:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+    
+    #leave-btn { 
+      background: var(--danger);
       margin-top: 1rem;
-      padding: 1rem;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      background: #f1f5f9;
     }
-    .question p { font-weight: bold; }
+    
+    #leave-btn:hover { 
+      background: var(--danger-hover);
+      box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+    }
+    
+    .question {
+      margin-top: 1.5rem;
+      padding: 1.2rem;
+      border-radius: 12px;
+      background: var(--light);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+      transition: all 0.3s;
+      border-left: 4px solid var(--primary);
+    }
+    
+    .question:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    
+    .question p { 
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.8rem;
+    }
+    
+    .option-label {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      margin: 5px 0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .option-label:hover {
+      background: rgba(108, 92, 231, 0.1);
+    }
+    
+    .radio-custom {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--primary);
+      border-radius: 50%;
+      margin-right: 10px;
+      position: relative;
+      cursor: pointer;
+    }
+    
+    .radio-custom:checked::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 10px;
+      height: 10px;
+      background: var(--primary);
+      border-radius: 50%;
+    }
+    
+    .quiz-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .quiz-header i {
+      font-size: 1.8rem;
+      color: var(--primary);
+      margin-right: 0.8rem;
+    }
+    
+    .pulse-animation {
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+    
+    .shake-animation {
+      animation: shake 0.5s;
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+      20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+    
+    #submit-btn {
+      background: var(--success);
+      margin-top: 2rem;
+    }
+    
+    #submit-btn:hover {
+      background: #27ae60;
+      box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+    }
+    
+    .progress-container {
+      margin-top: 1.5rem;
+      background: var(--light);
+      border-radius: 10px;
+      height: 10px;
+      overflow: hidden;
+    }
+    
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(to right, var(--secondary), var(--primary));
+      width: 0%;
+      transition: width 0.5s;
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background-color: #f2d74e;
+      position: absolute;
+      left: 50%;
+      animation: confetti 5s ease-in-out -2s infinite;
+      transform-origin: left top;
+    }
+    
+    .confetti:nth-child(1) {
+      background-color: #f2d74e; left: 10%; animation-delay: 0;
+    }
+    .confetti:nth-child(2) {
+      background-color: #95c3de; left: 20%; animation-delay: -5s;
+    }
+    .confetti:nth-child(3) {
+      background-color: #ff9a91; left: 30%; animation-delay: -3s;
+    }
+    .confetti:nth-child(4) {
+      background-color: #f2d74e; left: 40%; animation-delay: -2.5s;
+    }
+    .confetti:nth-child(5) {
+      background-color: #95c3de; left: 50%; animation-delay: -4s;
+    }
+    .confetti:nth-child(6) {
+      background-color: #ff9a91; left: 60%; animation-delay: -6s;
+    }
+    .confetti:nth-child(7) {
+      background-color: #f2d74e; left: 70%; animation-delay: -1.5s;
+    }
+    .confetti:nth-child(8) {
+      background-color: #95c3de; left: 80%; animation-delay: -2s;
+    }
+    .confetti:nth-child(9) {
+      background-color: #ff9a91; left: 90%; animation-delay: -3.5s;
+    }
+    
+    @keyframes confetti {
+      0% { transform: rotateZ(15deg) rotateY(0deg) translate(0, 0); }
+      25% { transform: rotateZ(5deg) rotateY(360deg) translate(-5vw, 20vh); }
+      50% { transform: rotateZ(15deg) rotateY(720deg) translate(5vw, 60vh); }
+      75% { transform: rotateZ(5deg) rotateY(1080deg) translate(-10vw, 80vh); }
+      100% { transform: rotateZ(15deg) rotateY(1440deg) translate(10vw, 100vh); }
+    }
   </style>
 </head>
 <body>
@@ -68,15 +327,36 @@
     <h1>Join Quiz</h1>
 
     <label for="student-name">Your Name:
-      <input type="text" id="student-name" required />
+      <input type="text" id="student-name" placeholder="Enter your full name" required />
     </label>
-    <button id="join-btn">Join</button>
+    <button id="join-btn"><i class="fas fa-sign-in-alt"></i> Join Quiz</button>
 
-    <div id="quiz-section" style="display:none;">
-      <h2 id="quiz-title">Welcome! 🎉</h2>
+    <div id="quiz-section" style="display:none;" class="fade-in">
+      <div class="quiz-header">
+        <i class="fas fa-brain pulse-animation"></i>
+        <h2 id="quiz-title">Welcome! 🎉</h2>
+      </div>
+      
+      <div class="progress-container">
+        <div class="progress-bar" id="quiz-progress"></div>
+      </div>
+      
       <div id="quiz-content"></div>
-      <button id="submit-btn" style="display:none;">Submit Answers</button>
-      <button id="leave-btn">Leave Quiz</button>
+      
+      <button id="submit-btn" style="display:none;"><i class="fas fa-paper-plane"></i> Submit Answers</button>
+      <button id="leave-btn"><i class="fas fa-sign-out-alt"></i> Leave Quiz</button>
+    </div>
+    
+    <div id="confetti-container" style="display:none;">
+      <div class="confetti"></div>
+      <div class="confetti"></div>
+      <div class="confetti"></div>
+      <div class="confetti"></div>
+      <div class="confetti"></div>
+      <div class="confetti"></div>
+      <div class="confetti"></div>
+      <div class="confetti"></div>
+      <div class="confetti"></div>
     </div>
   </div>
 
@@ -91,94 +371,279 @@
     const quizSection = document.getElementById('quiz-section');
     const quizTitle = document.getElementById('quiz-title');
     const quizContent = document.getElementById('quiz-content');
+    const progressBar = document.getElementById('quiz-progress');
+    const confettiContainer = document.getElementById('confetti-container');
 
     let quizData = null;
+    let quizInterval = null;
 
-    // Join Quiz
+    // Join Quiz with animation
     joinBtn.onclick = async () => {
       const name = nameInput.value.trim();
-      if (!name) return alert('Please enter your name.');
-
-      if (localStorage.getItem('participantId')) {
-        alert('You already joined!');
+      if (!name) {
+        nameInput.classList.add('shake-animation');
+        setTimeout(() => nameInput.classList.remove('shake-animation'), 500);
         return;
       }
 
-      const res = await fetch('/api/join', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name })
-      });
-      const data = await res.json();
+      if (localStorage.getItem('participantId')) {
+        showNotification('You already joined!', 'warning');
+        return;
+      }
 
-      localStorage.setItem('participantId', data.id);
+      try {
+        joinBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Joining...';
+        joinBtn.disabled = true;
+        
+        const res = await fetch('/api/join', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name })
+        });
+        
+        if (!res.ok) throw new Error('Failed to join');
+        
+        const data = await res.json();
+        localStorage.setItem('participantId', data.id);
 
-      quizSection.style.display = 'block';
-      joinBtn.disabled = true;
-      nameInput.disabled = true;
+        quizSection.style.display = 'block';
+        nameInput.disabled = true;
+        joinBtn.style.display = 'none';
+        
+        showNotification('Successfully joined the quiz!', 'success');
 
-      // Start fetching quizzes
-      fetchQuiz();
-      setInterval(fetchQuiz, 5000);
+        // Start fetching quizzes
+        fetchQuiz();
+        quizInterval = setInterval(fetchQuiz, 5000);
+      } catch (error) {
+        joinBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Join Quiz';
+        joinBtn.disabled = false;
+        showNotification('Failed to join quiz. Please try again.', 'error');
+      }
     };
 
     // Fetch current quiz
     async function fetchQuiz() {
-      const res = await fetch('/api/currentQuiz');
-      if (!res.ok) return;
-      const quiz = await res.json();
-      if (!quiz.questions) return;
+      try {
+        const res = await fetch('/api/currentQuiz');
+        if (!res.ok) return;
+        
+        const quiz = await res.json();
+        if (!quiz.questions) return;
 
-      if (!quizData || quizData.name !== quiz.name) {
-        quizData = quiz;
-        renderQuiz(quiz);
+        if (!quizData || quizData.name !== quiz.name) {
+          quizData = quiz;
+          renderQuiz(quiz);
+        }
+      } catch (error) {
+        console.error('Error fetching quiz:', error);
       }
     }
 
-    // Render quiz questions
+    // Render quiz questions with animation
     function renderQuiz(quiz) {
       quizTitle.textContent = quiz.name;
       quizContent.innerHTML = '';
+      
       quiz.questions.forEach((q, idx) => {
         const qDiv = document.createElement('div');
-        qDiv.className = 'question';
+        qDiv.className = 'question fade-in';
+        qDiv.style.animationDelay = `${idx * 0.1}s`;
+        
         qDiv.innerHTML = `
-          <p>${idx + 1}. ${q.question}</p>
-          ${Object.keys(q.options).map(k => `
-            <label><input type="radio" name="q${idx}" value="${k}"> ${k}) ${q.options[k]}</label><br>
-          `).join('')}
+          <p><i class="fas fa-question-circle"></i> ${idx + 1}. ${q.question}</p>
+          <div class="options-container">
+            ${Object.keys(q.options).map(k => `
+              <label class="option-label">
+                <input type="radio" name="q${idx}" value="${k}" class="radio-custom">
+                <span>${k}) ${q.options[k]}</span>
+              </label>
+            `).join('')}
+          </div>
         `;
         quizContent.appendChild(qDiv);
       });
+      
       submitBtn.style.display = 'block';
+      updateProgress();
     }
 
-    // Submit answers
+    // Track progress
+    function updateProgress() {
+      const totalQuestions = document.querySelectorAll('.question').length;
+      const answeredQuestions = document.querySelectorAll('input[type="radio"]:checked').length;
+      const percentage = (answeredQuestions / totalQuestions) * 100;
+      progressBar.style.width = `${percentage}%`;
+    }
+
+    // Add event listener to track progress
+    quizContent.addEventListener('change', updateProgress);
+
+    // Submit answers with animation
     submitBtn.onclick = async () => {
+      const totalQuestions = quizData.questions.length;
       const answers = [];
+      let unanswered = 0;
+      
       quizData.questions.forEach((q, idx) => {
         const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+        if (!selected) unanswered++;
         answers[idx] = selected ? selected.value : null;
       });
-
-      const res = await fetch('/api/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ participantId: localStorage.getItem('participantId'), answers })
-      });
-      const result = await res.json();
-      alert(`🎉 You scored ${result.score} / ${quizData.questions.length}`);
+      
+      if (unanswered > 0) {
+        if (!confirm(`You have ${unanswered} unanswered question(s). Submit anyway?`)) {
+          return;
+        }
+      }
+      
+      try {
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+        submitBtn.disabled = true;
+        
+        const res = await fetch('/api/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            participantId: localStorage.getItem('participantId'), 
+            answers 
+          })
+        });
+        
+        if (!res.ok) throw new Error('Failed to submit');
+        
+        const result = await res.json();
+        const score = result.score;
+        const percentage = (score / totalQuestions) * 100;
+        
+        // Show confetti for good scores
+        if (percentage >= 70) {
+          confettiContainer.style.display = 'block';
+          setTimeout(() => {
+            confettiContainer.style.display = 'none';
+          }, 5000);
+        }
+        
+        showScoreCard(score, totalQuestions, percentage);
+        
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Answers';
+        submitBtn.disabled = false;
+      } catch (error) {
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Answers';
+        submitBtn.disabled = false;
+        showNotification('Failed to submit answers. Please try again.', 'error');
+      }
     };
+
+    // Show score card
+    function showScoreCard(score, total, percentage) {
+      let emoji, message;
+      
+      if (percentage >= 90) {
+        emoji = '🏆';
+        message = 'Outstanding!';
+      } else if (percentage >= 70) {
+        emoji = '🎉';
+        message = 'Great job!';
+      } else if (percentage >= 50) {
+        emoji = '👍';
+        message = 'Good effort!';
+      } else {
+        emoji = '📚';
+        message = 'Keep studying!';
+      }
+      
+      quizContent.innerHTML = `
+        <div class="question fade-in" style="text-align: center; padding: 2rem;">
+          <h2>${emoji} ${message}</h2>
+          <p style="font-size: 1.5rem; margin: 1rem 0;">Your Score</p>
+          <div style="font-size: 3rem; color: var(--primary); margin: 1rem 0;">${score} / ${total}</div>
+          <div style="font-size: 1.2rem; margin: 1rem 0;">${percentage.toFixed(1)}%</div>
+        </div>
+      `;
+      
+      submitBtn.style.display = 'none';
+    }
 
     // Leave Quiz
     leaveBtn.onclick = () => {
-      localStorage.removeItem('participantId');
-      quizSection.style.display = 'none';
-      joinBtn.disabled = false;
-      nameInput.disabled = false;
-      nameInput.value = '';
-      alert('You have left the quiz.');
+      if (confirm('Are you sure you want to leave the quiz?')) {
+        localStorage.removeItem('participantId');
+        quizSection.style.display = 'none';
+        joinBtn.style.display = 'block';
+        joinBtn.disabled = false;
+        joinBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Join Quiz';
+        nameInput.disabled = false;
+        nameInput.value = '';
+        
+        if (quizInterval) {
+          clearInterval(quizInterval);
+        }
+        
+        showNotification('You have left the quiz.', 'info');
+      }
     };
+
+    // Show notifications
+    function showNotification(message, type) {
+      // Create notification element
+      const notification = document.createElement('div');
+      notification.className = 'notification fade-in';
+      
+      let bgColor, icon;
+      
+      switch(type) {
+        case 'success':
+          bgColor = '#2ecc71';
+          icon = 'check-circle';
+          break;
+        case 'error':
+          bgColor = '#e74c3c';
+          icon = 'times-circle';
+          break;
+        case 'warning':
+          bgColor = '#f39c12';
+          icon = 'exclamation-triangle';
+          break;
+        default:
+          bgColor = '#3498db';
+          icon = 'info-circle';
+      }
+      
+      notification.style = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        background-color: ${bgColor};
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        min-width: 280px;
+        max-width: 400px;
+      `;
+      
+      notification.innerHTML = `
+        <i class="fas fa-${icon}" style="margin-right: 10px; font-size: 1.2em;"></i>
+        <span>${message}</span>
+      `;
+      
+      document.body.appendChild(notification);
+      
+      // Remove after 3 seconds
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(20px)';
+        notification.style.transition = 'all 0.5s ease';
+        
+        setTimeout(() => {
+          document.body.removeChild(notification);
+        }, 500);
+      }, 3000);
+    }
   </script>
 </body>
 </html>
